@@ -1,151 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base.html" %}
 
-    <!-- Bootstrap CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block content %}
 
-    <style>
-        body {
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-
-        .login-container {
-            height: 100vh;
-        }
-
-        /* Bookish Left Section */
-        .left-section {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-                        url('https://images.unsplash.com/photo-1512820790803-83ca734da794') 
-                        no-repeat center center/cover;
-            color: white;
-            padding: 60px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .left-section h1 {
-            font-weight: bold;
-            font-size: 38px;
-        }
-
-        .left-section p {
-            opacity: 0.9;
-        }
-
-        .right-section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f8f9fa;
-        }
-
-        .login-card {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .btn-login {
-            background-color: black;
-            color: white;
-            border-radius: 30px;
-            padding: 10px;
-        }
-
-        .btn-login:hover {
-            background-color: #333;
-        }
-
-        .signup-link {
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .signup-link:hover {
-            text-decoration: underline;
-        }
-
-        .input-group-text {
-            cursor: pointer;
-            background-color: white;
-        }
-    </style>
-</head>
-<body>
-    <!-- DJANGO MESSEGES / ALERTS-->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
-    <div class="container-fluid login-container">
-        <div class="row h-100">
-
-            <!-- Left Section -->
-            <div class="col-md-6 left-section d-none d-md-flex">
-                <div>
-                    <h1>Discover Stories.<br>Track Your Reads.<br>Join the Community.</h1>
-                    <p>Log in to explore new books, share reviews, and connect with fellow readers.</p>
-                </div>
-            </div>
-
-            <!-- Right Section -->
-            <div class="col-md-6 right-section">
-                <div class="login-card">
-                    <h2 class="mb-3">Welcome Back!</h2>
-                    <p class="text-muted mb-4">Log in with your email and password.</p>
-
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label>Email</label>
-                            <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Password</label>
-                            <div class="input-group">
-                                <input type="password" name="password1" id="password" class="form-control" placeholder="Enter your password" required>
-                                <span class="input-group-text" onclick="togglePassword()">👁</span>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn btn-login w-100">Login</button>
-                    </form>
-
-                    <div class="text-center mt-3">
-                        <span>Don't have an account? </span>
-                        <a href="#" class="signup-link">Sign up</a>
-                    </div>
-                </div>
-            </div>
-
+<!-- DJANGO MESSAGES -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
+    {% endfor %}
+{% endif %}
+
+<br> 
+
+<div class="container-fluid login-container">
+    <div class="row h-100">
+
+        <!-- Left Section -->
+        <div class="col-md-6 left-section d-none d-md-flex">
+            <div>
+                <h1>Discover Stories.<br>Track Your Reads.<br>Join the Community.</h1>
+                <p>Log in to explore new books, share reviews, and connect with fellow readers.</p>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="col-md-6 right-section">
+            <div class="login-card">
+
+                <h2 class="mb-3">Welcome Back!</h2>
+                <p class="text-muted mb-4">Log in with your email and password.</p>
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Password</label>
+
+                        <div class="input-group">
+
+                            <input type="password" name="password" id="password"
+                                   class="form-control" placeholder="Enter your password" required>
+
+                            <span class="input-group-text" onclick="togglePassword()">👁</span>
+
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-login w-100">
+                        Login
+                    </button>
+
+                </form>
+
+                <div class="text-center mt-3">
+
+                    <span>Don't have an account? </span>
+
+                    <a href="{% url 'register' %}" class="signup-link">
+                        Sign up
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+
     </div>
+</div>
 
 <script>
-    function togglePassword() {
-        const passwordField = document.getElementById("password");
-        passwordField.type = passwordField.type === "password" ? "text" : "password";
-    }
 
-    document.getElementById("loginForm").addEventListener("submit", function(e){
-        e.preventDefault();
-        alert("Login submitted!");
-    });
+function togglePassword() {
+    const passwordField = document.getElementById("password");
+
+    passwordField.type =
+        passwordField.type === "password" ? "text" : "password";
+}
+
 </script>
 
-</body>
-</html>
+{% endblock %}

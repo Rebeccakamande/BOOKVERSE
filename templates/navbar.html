@@ -1,0 +1,62 @@
+<nav class="navbar navbar-expand-lg custom-navbar">
+
+<div class="container">
+
+<!-- Logo -->
+
+<a class="navbar-brand logo" href="/">
+📚 BookVerse
+</a>
+
+
+<!-- Mobile Menu Button -->
+
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+<span class="navbar-toggler-icon"></span>
+</button>
+
+
+<!-- Navbar Content -->
+
+<div class="collapse navbar-collapse" id="navMenu">
+
+<!-- Menu Links -->
+
+<ul class="navbar-nav ms-auto">
+
+{% if not user.is_authenticated %}
+<li class="nav-item">
+<a class="nav-link" href="{% url 'home' %}">Home</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="{% url 'login' %}">Login</a>
+</li>
+
+{% else %}
+
+<li class="nav-item">
+<a class="nav-link" href="#">Dashboard</a>
+</li>
+
+
+<li class="nav-item">
+<a class="nav-link" href="{% url 'logout' %}">Logout</a>
+</li>
+
+{% endif %}
+</ul>
+
+{% if not user.is_suthenticated %}
+<!-- CTA Button -->
+<a class="btn get-started ms-3" href="{% url 'register' %}">
+Get Started
+</a>
+{% else %}
+
+{% endif %}
+</div>
+
+</div>
+
+</nav>

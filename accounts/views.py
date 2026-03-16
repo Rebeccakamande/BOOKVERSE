@@ -3,6 +3,7 @@ from django.contrib import messages
 from .models import User
 from django.contrib.auth import login,logout,authenticate
 import re
+from django.contrib.auth.decorators import login_required
 
 def register_view(request):
     errors = {}
@@ -71,28 +72,40 @@ def register_view(request):
 
     return render(request, 'accounts/registrationForm.html', {"errors": errors})
 
-# Login 
 def login_view(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password1 = request.POST.get('password1')
 
-        #Check if the email exists
+    if request.method == 'POST':
+
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        # Check if email exists
         try:
             user = User.objects.get(email=email)
+
         except User.DoesNotExist:
-            messages.error(request, "Invalid email or Password")
-            return render(request, 'acconts/loginForm.html')
-        
-        user = authenticate(request, username=user.username, password1=password1)
+            messages.error(request, "Invalid email or password")
+            return render(request, 'accounts/loginForm.html')
+
+        user = authenticate(request, username=user.username, password=password)
 
         if user is not None:
             if user.is_blocked:
                 messages.error(request, "Your account has been blocked")
-                return render(request, 'acconts/loginForm.html')
-            
+                return render(request, 'accounts/loginForm.html')
+
             login(request, user)
-            messages.success(request, "Login Successfull")
-            # return redirect("home")
+            messages.success(request, "Login Successful")
+            return redirect("home")
+        else:
+            messages.error(request, "Invalid email or password")
 
     return render(request, 'accounts/loginForm.html')
+
+def home(request):
+    return render(request, 'home.html')
+
+@login_required(login_url='login')
+def logout_view(request):
+    logout(request)
+    return redirect('home')

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+
+<div class="container">
+
+<div class="row align-items-center">
+
+<div class="col-lg-6">
+
+<h1>
+Welcome to <span>BookVerse!</span>
+</h1>
+
+<p>
+A magical place for book lovers of all ages. Join our community to share your favorite stories and discover your next great read.
+</p>
+
+<div class="hero-buttons">
+
+<a href="{% url 'register' %}"><button class="btn primary-btn">
+Join Our Community
+</button></a>
+
+<button class="btn secondary-btn">
+Explore Library
+</button>
+
+</div>
+
+</div>
+
+
+<div class="col-lg-6">
+
+<img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da"
+class="img-fluid hero-image">
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section class="discover">
+
+<div class="container">
+
+<h2>Discover the Magic</h2>
+
+<p class="subtitle">
+Explore curated collections from our passionate community of readers.
+</p>
+
+<div class="row g-4">
+
+<div class="col-md-3">
+
+<div class="discover-card">
+
+<img src="https://images.unsplash.com/photo-1512820790803-83ca734da794">
+
+<h5>Curated Classics</h5>
+
+<p>Timeless tales for everyone</p>
+
+</div>
+
+</div>
+
+
+<div class="col-md-3">
+
+<div class="discover-card">
+
+<img src="https://images.unsplash.com/photo-1519682337058-a94d519337bc">
+
+<h5>Daily Discoveries</h5>
+
+<p>New adventures every day</p>
+
+</div>
+
+</div>
+
+
+<div class="col-md-3">
+
+<div class="discover-card">
+
+<img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d">
+
+<h5>The Archive</h5>
+
+<p>Organize your digital collection</p>
+
+</div>
+
+</div>
+
+
+<div class="col-md-3">
+
+<div class="discover-card">
+
+<img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f">
+
+<h5>Community Circle</h5>
+
+<p>Share the joy of reading</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section class="cta-section">
+
+<div class="container">
+
+<div class="cta-box">
+
+<h2>Ready to start your next chapter?</h2>
+
+<p>
+Sign up today and immerse yourself in a world of stories, reviews and discussions.
+</p>
+
+<a href="{% url 'register' %}">
+    <button class="cta-btn">
+    Create Free Account 🚀
+</button>
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+{% endblock %}
