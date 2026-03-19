@@ -18,6 +18,15 @@
 
 <body>
 
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-warning alert-dismissible fade show mt-3">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+    {% endif %}
+
 {% include 'navbar.html' %}
 
 {% block content %}

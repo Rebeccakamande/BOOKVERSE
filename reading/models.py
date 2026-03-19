@@ -32,6 +32,8 @@ class ReadingProgress(models.Model):
         default=ReadingStatus.TO_BE_READ
     )
 
+    started_at = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -44,4 +46,4 @@ class ReadingProgress(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.user.username} - {self.book.title}"
+        return f"{self.user.username} - {self.book.title} ({self.status})"

@@ -3,29 +3,45 @@ import random
 from django.contrib.auth.decorators import login_required
 from .models import Category, Book
 from django.core.paginator import Paginator
-
 from django.shortcuts import render
 from books.models import Book, Category
+from django.db.models import Q
 
+@login_required
 def library_view(request):
-    # Fetch all categories that have at least one book
-    categories = Category.objects.prefetch_related('books').filter(books__isnull=False).distinct()
+    query = request.GET.get('q')
 
-    library_data = []
+    if query:
+        books = Book.objects.filter(
+            Q(title__icontains = query) |
+            Q(author__icontains = query)
+        ).distinct()
 
-    for category in categories:
-        # Get the latest 8 books for each category
-        books = category.books.all().order_by('-id')[:8]
-        library_data.append({
-            'category': category,
-            'books': books
-        })
+        context = {
+            'search_results': books,
+            'query': query
+        }
 
-    context = {
-        'library_data': library_data
-    }
+    else:
+        # Fetch all categories that have at least one book
+        categories = Category.objects.prefetch_related('books').filter(books__isnull=False).distinct()
+
+        library_data = []
+
+        for category in categories:
+            # Get the latest 8 books for each category
+            books = category.books.all().order_by('-id')[:8]
+            library_data.append({
+                'category': category,
+                'books': books
+            })
+
+        context = {
+            'library_data': library_data
+        }
     return render(request, 'books/library.html', context)
 
+@login_required
 def category_books(request, slug):
     # Get the category
     category = get_object_or_404(Category, slug=slug)
@@ -46,6 +62,7 @@ def category_books(request, slug):
 
     return render(request, 'books/category_books.html', context)
 
+@login_required
 def book_detail(request, pk):
     book = get_object_or_404(Book, pk=pk)
 

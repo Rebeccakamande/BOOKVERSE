@@ -8,7 +8,7 @@
         {% for book in page_obj %}
         <div class="col-md-3 mb-4">
             <!-- Make the whole card clickable -->
-            <a href="{% url 'book_detail' book.id %}" style="text-decoration: none; color: inherit;">
+            <a href="{% url 'books:book_detail' book.id %}" style="text-decoration: none; color: inherit;">
                 <div class="card h-100 shadow-sm">
                     {% if book.cover_image_url %}
                     <img src="{{ book.cover_image_url }}"

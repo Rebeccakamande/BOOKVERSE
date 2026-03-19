@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Greeting -->
+    <h3 class="mb-4">Welcome back, {{ user.username }} 👋</h3>
+
+    <!-- Top Stats Cards -->
+    <div class="row mb-4 text-center">
+
+        <div class="col-md-4 mb-2">
+            <div class="card shadow-sm status-card active py-2" data-status="to_be_read" style="cursor:pointer;">
+                <h6 class="mb-0">To Be Read</h6>
+                <h5 class="fw-bold">{{ to_be_read_count }}</h5>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-2">
+            <div class="card shadow-sm status-card py-2" data-status="reading" style="cursor:pointer;">
+                <h6 class="mb-0">Currently Reading</h6>
+                <h5 class="fw-bold text-warning">{{ currently_reading_count }}</h5>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-2">
+            <div class="card shadow-sm status-card py-2" data-status="completed" style="cursor:pointer;">
+                <h6 class="mb-0">Completed</h6>
+                <h5 class="fw-bold text-success">{{ completed_count }}</h5>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Books -->
+    <div class="row" id="books-list">
+
+        <!-- TO BE READ -->
+        {% for progress in to_be_read %}
+        <div class="col-md-3 mb-4 book-card" data-status="to_be_read">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ progress.book.get_cover }}" class="card-img-top" style="height:240px; object-fit:cover;">
+                <div class="card-body text-center">
+
+                    <h6 class="card-title">{{ progress.book.title }}</h6>
+                    <p class="text-muted small">{{ progress.book.author }}</p>
+
+                    <a href="{% url 'read_book' progress.book.id %}" 
+                       class="btn btn-sm btn-warning w-100 text-white">
+                        Start Reading
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- CURRENTLY READING -->
+        {% for progress in currently_reading %}
+        <div class="col-md-3 mb-4 book-card" data-status="reading">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ progress.book.get_cover }}" class="card-img-top" style="height:240px; object-fit:cover;">
+                <div class="card-body text-center">
+
+                    <h6 class="card-title">{{ progress.book.title }}</h6>
+                    <p class="text-muted small">{{ progress.book.author }}</p>
+
+                    <!-- Progress Bar -->
+                    <div class="progress mb-2" style="height:6px;">
+                        <div class="progress-bar bg-warning" style="width: {{ progress.percentage }}%"></div>
+                    </div>
+
+                    <p class="small text-muted">
+                        Page {{ progress.current_page }} • {{ progress.percentage }}%
+                    </p>
+
+                    <a href="{% url 'read_book' progress.book.id %}" 
+                       class="btn btn-sm btn-success w-100 text-white">
+                        Continue Reading
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- COMPLETED -->
+        {% for progress in completed %}
+        <div class="col-md-3 mb-4 book-card" data-status="completed">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ progress.book.get_cover }}" class="card-img-top" style="height:240px; object-fit:cover;">
+                <div class="card-body text-center">
+
+                    <h6 class="card-title">{{ progress.book.title }}</h6>
+                    <p class="text-muted small">{{ progress.book.author }}</p>
+
+                    <span class="badge bg-success mb-2">Completed</span>
+
+                    <div class="progress" style="height:6px;">
+                        <div class="progress-bar bg-success" style="width:100%"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+<!-- Filter JS -->
+<script>
+document.querySelectorAll('.status-card').forEach(card => {
+    card.addEventListener('click', () => {
+
+        document.querySelectorAll('.status-card').forEach(c => c.classList.remove('border', 'border-dark'));
+        card.classList.add('border', 'border-dark');
+
+        const status = card.dataset.status;
+
+        document.querySelectorAll('.book-card').forEach(book => {
+            book.style.display = (book.dataset.status === status) ? 'block' : 'none';
+        });
+    });
+});
+</script>
+
+{% endblock %}

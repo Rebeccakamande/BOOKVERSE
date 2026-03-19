@@ -34,9 +34,12 @@
 </li>
 
 {% else %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'books:library' %}">Library</a>
+</li>
 
 <li class="nav-item">
-<a class="nav-link" href="#">Dashboard</a>
+<a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
 </li>
 
 
@@ -45,9 +48,9 @@
 </li>
 
 {% endif %}
-</ul>
 
-{% if not user.is_suthenticated %}
+
+{% if not user.is_authenticated %}
 <!-- CTA Button -->
 <a class="btn get-started ms-3" href="{% url 'register' %}">
 Get Started

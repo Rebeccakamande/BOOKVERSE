@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Hide navbar + footer for immersive reading -->
+<style>
+nav, footer {
+    display: none !important;
+}
+</style>
+
+<div class="container-fluid p-0">
+
+    <!-- Top Bar -->
+    <div class="d-flex justify-content-between align-items-center px-3 py-2 bg-light border-bottom">
+        <h6 class="mb-0">{{ book.title }}</h6>
+
+        <button id="fullscreen-btn" onclick="toggleFullscreen()" class="btn btn-sm btn-dark">
+            Fullscreen
+        </button>
+    </div>
+
+    <!-- Progress Info -->
+    <div class="px-3 py-2 bg-white border-bottom">
+        <span>Page: <span id="page_num">1</span></span>
+        <span class="ms-3">Progress: <span id="progress">0</span>%</span>
+    </div>
+
+    <!-- PDF Scroll Container -->
+    <div id="pdf-container"
+         style="height: calc(100vh - 90px); overflow-y: scroll; background:#f8f9fa;">
+    </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<script>
+const url = "{{ book.file.url }}";
+
+let pdfDoc = null;
+let totalPages = 0;
+
+const container = document.getElementById('pdf-container');
+
+// LOAD PDF
+pdfjsLib.getDocument(url).promise.then(pdf => {
+    pdfDoc = pdf;
+    totalPages = pdf.numPages;
+
+    for (let i = 1; i <= totalPages; i++) {
+        renderPage(i);
+    }
+});
+
+// RENDER EACH PAGE
+function renderPage(num) {
+    pdfDoc.getPage(num).then(page => {
+        const scale = 1.5;
+        const viewport = page.getViewport({ scale });
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        canvas.style.display = "block";
+        canvas.style.margin = "0 auto 20px";
+
+        container.appendChild(canvas);
+
+        const renderCtx = {
+            canvasContext: ctx,
+            viewport
+        };
+
+        page.render(renderCtx);
+    });
+}
+
+// OPTIMIZED SCROLL TRACKING (debounced)
+let timeout = null;
+
+container.addEventListener('scroll', () => {
+    clearTimeout(timeout);
+
+    timeout = setTimeout(() => {
+        const scrollTop = container.scrollTop;
+        const scrollHeight = container.scrollHeight - container.clientHeight;
+
+        let percentage = Math.floor((scrollTop / scrollHeight) * 100);
+        if (!percentage || percentage < 0) percentage = 0;
+
+        let currentPage = Math.ceil((percentage / 100) * totalPages);
+        if (currentPage < 1) currentPage = 1;
+
+        document.getElementById('progress').textContent = percentage;
+        document.getElementById('page_num').textContent = currentPage;
+
+        saveProgress(currentPage, percentage);
+    }, 300);
+});
+
+// SAVE PROGRESS
+function saveProgress(page, percentage) {
+    fetch("{% url 'save_progress' book.id %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({
+            page: page,
+            percentage: percentage
+        })
+    });
+}
+
+// 🔥 FULLSCREEN TOGGLE WITH TEXT CHANGE
+function toggleFullscreen() {
+    const elem = document.documentElement;
+    const btn = document.getElementById('fullscreen-btn');
+
+    if (!document.fullscreenElement) {
+        elem.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+// Update button text when fullscreen changes
+document.addEventListener('fullscreenchange', () => {
+    const btn = document.getElementById('fullscreen-btn');
+    btn.textContent = document.fullscreenElement ? "Minimize" : "Fullscreen";
+});
+</script>
+
+{% endblock %}
