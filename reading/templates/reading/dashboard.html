@@ -106,6 +106,33 @@
         {% endfor %}
 
     </div>
+
+</div>
+
+<h4 class="mt-5">Your Reviews</h4>
+
+<div class="row">
+    {% for review in user_reviews %}
+    <div class="col-md-4 mb-3">
+        <div class="card p-3 shadow-sm">
+
+            <h6>{{ review.book.title }}</h6>
+
+            <p class="text-warning">
+                {% for i in "12345" %}
+                    {% if forloop.counter <= review.rating %}
+                        ★
+                    {% else %}
+                        ☆
+                    {% endif %}
+                {% endfor %}
+            </p>
+
+            <p class="small">{{ review.comment }}</p>
+
+        </div>
+    </div>
+    {% endfor %}
 </div>
 
 <!-- Filter JS -->

@@ -6,6 +6,8 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 from books.models import Book, Category
 from django.db.models import Q
+from reviews.models import Review
+from django.db.models import Avg
 
 @login_required
 def library_view(request):
@@ -66,8 +68,22 @@ def category_books(request, slug):
 def book_detail(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
+    reviews = Review.objects.filter(book=book, approved=True)
+    avg_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0
+
+    # convert rating to integer for stars
+    avg_rating_int = int(round(avg_rating))
+
+    user_review = None
+    if request.user.is_authenticated:
+        user_review = Review.objects.filter(user=request.user, book=book).first()
+
     context = {
-        'book': book
+        'book': book,
+        'reviews': reviews,
+        'avg_rating': avg_rating,
+        'avg_rating_int': avg_rating_int,
+        'user_review': user_review,
     }
 
     return render(request, 'books/book_detail.html', context)

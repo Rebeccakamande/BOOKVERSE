@@ -7,6 +7,8 @@ from .models import ReadingProgress
 import json
 from django.http import JsonResponse
 from django.contrib import messages
+from reviews.models import Review
+from django.db.models import Avg
 
 
 @login_required
@@ -70,6 +72,7 @@ def update_reading_status(request, book_id, status):
 def dashboard_view(request):
     # Get all reading progress for this user
     progress_qs = ReadingProgress.objects.filter(user=request.user).select_related('book')
+    user_reviews = Review.objects.filter(user=request.user).select_related('book')
 
     # Filter by status
     to_be_read = progress_qs.filter(status='to_be_read')
@@ -83,6 +86,7 @@ def dashboard_view(request):
         'to_be_read_count': to_be_read.count(),
         'currently_reading_count': currently_reading.count(),
         'completed_count': completed.count(),
+        'user_reviews': user_reviews,
     }
 
     return render(request, 'reading/dashboard.html', context)
@@ -159,3 +163,41 @@ def dashboard_progress_api(request):
         'currently_reading_count': progress_qs.count(),
         'completed_count': ReadingProgress.objects.filter(user=request.user, status='completed').count()
     })
+
+
+# ⭐ ADD REVIEW
+@login_required
+def add_review(request, book_id):
+    if request.method == "POST":
+        book = get_object_or_404(Book, id=book_id)
+
+        # 🚫 Check if review already exists
+    existing_review = Review.objects.filter(user=request.user, book=book).first()
+
+    if request.method == "POST":
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+
+        # ✅ Prevent empty rating crash
+        if not rating:
+            messages.error(request, "Please select a rating.")
+            return redirect('books:book_detail', pk=book.id)
+
+        rating = int(rating)
+
+        # 🔁 UPDATE instead of creating new
+        if existing_review:
+            existing_review.rating = rating
+            existing_review.comment = comment
+            existing_review.save()
+            messages.success(request, "Review updated successfully!")
+        else:
+            Review.objects.create(
+                user=request.user,
+                book=book,
+                rating=rating,
+                comment=comment
+            )
+            messages.success(request, "Review added successfully!")
+
+    return redirect('books:book_detail', pk=book.id)

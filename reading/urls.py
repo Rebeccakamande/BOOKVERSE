@@ -7,4 +7,5 @@ urlpatterns = [
     path('read/<int:book_id>/', views.read_book, name='read_book'),
      path('save-progress/<int:book_id>/', views.save_progress, name='save_progress'),
      path('dashboard/progress-api/', views.dashboard_progress_api, name='dashboard_progress_api'),
+     path('review/<int:book_id>/', views.add_review, name='add_review'),
 ]
