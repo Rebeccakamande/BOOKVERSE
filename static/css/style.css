@@ -85,7 +85,7 @@ margin-top:30px;
 /* HERO BUTTONS */
 
 .primary-btn{
-background:#f39c12;
+background:#f39c12;        
 color:white;
 border-radius:30px;
 padding:12px 28px;
@@ -185,7 +185,7 @@ padding:80px 0;
 }
 
 .cta-box{
-background:linear-gradient(135deg,#f7e2c7,#f1c487);
+background:linear-gradient(135deg,#f7e2c7,#f1c487); 
 padding:60px;
 border-radius:30px;
 text-align:center;
@@ -321,15 +321,16 @@ max-width:400px;
 box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
 
-.btn-login{
-background:black;
-color:white;
-border-radius:30px;
-padding:10px;
+button.btn-login {
+    background-color: #f39c12 !important;
+    color: white !important;
+    border-radius: 30px !important;
+    padding: 10px !important;
+    border: none !important;
 }
 
-.btn-login:hover{
-background:#333;
+button.btn-login:hover {
+    background-color: #f1c487 !important;
 }
 
 .signup-link{

@@ -95,7 +95,7 @@ def dashboard_view(request):
 def read_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
 
-    # 🔥 CHECK IF FILE EXISTS
+    # CHECK IF FILE EXISTS
     if not book.file:
         messages.warning(request, "This book does not have a readable file yet.")
         return redirect('dashboard')
@@ -168,24 +168,24 @@ def dashboard_progress_api(request):
 # ⭐ ADD REVIEW
 @login_required
 def add_review(request, book_id):
-    if request.method == "POST":
-        book = get_object_or_404(Book, id=book_id)
+    
+    book = get_object_or_404(Book, id=book_id)
 
-        # 🚫 Check if review already exists
+    # Check if review already exists
     existing_review = Review.objects.filter(user=request.user, book=book).first()
 
     if request.method == "POST":
         rating = request.POST.get('rating')
         comment = request.POST.get('comment')
 
-        # ✅ Prevent empty rating crash
+        # Prevent empty rating crash
         if not rating:
             messages.error(request, "Please select a rating.")
             return redirect('books:book_detail', pk=book.id)
 
         rating = int(rating)
 
-        # 🔁 UPDATE instead of creating new
+        # UPDATE instead of creating new
         if existing_review:
             existing_review.rating = rating
             existing_review.comment = comment
@@ -201,3 +201,12 @@ def add_review(request, book_id):
             messages.success(request, "Review added successfully!")
 
     return redirect('books:book_detail', pk=book.id)
+
+@login_required
+def delete_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id, user=request.user)
+
+    review.delete()
+    messages.success(request, "Review deleted successfully!")
+
+    return redirect('dashboard')

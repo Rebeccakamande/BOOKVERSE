@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+
+    <h3 class="text-center mb-4">Edit Profile</h3>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow-sm border-primary">
+                <div class="card-body">
+
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- PROFILE IMAGE -->
+                        <div class="text-center mb-3">
+                            {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture.url }}" 
+                                     class="rounded-circle mb-2"
+                                     width="120" height="120"
+                                     id="avatarPreview">
+                            {% else %}
+                                <img src="{% static 'images/default_profile.png' %}" 
+                                     class="rounded-circle mb-2"
+                                     width="120" height="120"
+                                     id="avatarPreview">
+                            {% endif %}
+                        </div>
+
+                        <!-- USERNAME -->
+                        <div class="mb-3">
+                            {{ form.username.label_tag }}
+                            {{ form.username }}
+                            {% for error in form.username.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- FULL NAME -->
+                        <div class="mb-3">
+                            {{ form.full_name.label_tag }}
+                            {{ form.full_name }}
+                        </div>
+
+                        <!-- PHONE -->
+                        <div class="mb-3">
+                            {{ form.phone_number.label_tag }}
+                            {{ form.phone_number }}
+                        </div>
+
+                        <!-- DOB -->
+                        <div class="mb-3">
+                            {{ form.date_of_birth.label_tag }}
+                            {{ form.date_of_birth }}
+                        </div>
+
+                        <!-- PROFILE PIC -->
+                        <div class="mb-3">
+                            {{ form.profile_picture.label_tag }}
+                            {{ form.profile_picture }}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            Save Changes
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- IMAGE PREVIEW -->
+<script>
+document.getElementById('id_profile_picture').addEventListener('change', function(e){
+    const [file] = this.files
+    if(file){
+        document.getElementById('avatarPreview').src = URL.createObjectURL(file)
+    }
+});
+</script>
+
+{% endblock %}

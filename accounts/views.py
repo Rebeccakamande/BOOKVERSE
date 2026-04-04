@@ -4,6 +4,8 @@ from .models import User
 from django.contrib.auth import login,logout,authenticate
 import re
 from django.contrib.auth.decorators import login_required
+from .forms import EditProfileForm
+from django.contrib.auth import update_session_auth_hash
 
 def register_view(request):
     errors = {}
@@ -109,3 +111,19 @@ def home(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+@login_required
+def edit_profile(request):
+    if request.method == "POST":
+        form = EditProfileForm(request.POST, request.FILES, instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('edit_profile')
+        else:
+            messages.error(request, "Please fix the errors below.")
+    else:
+        form = EditProfileForm(instance=request.user)
+
+    return render(request, 'accounts/edit_profile.html', {'form': form})
